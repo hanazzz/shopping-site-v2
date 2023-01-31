@@ -57,6 +57,8 @@ def read_customers_from_file(filepath):
 def get_by_email(email):
     """Return a customer, given their email.
     
+    Returns None if no customer with matching email is found.
+    
     Parameters:
     email (str): Customer's email
 
@@ -64,7 +66,7 @@ def get_by_email(email):
     Customer obj    
     """
 
-    return customers[email]
+    return customers.get(email)
 
 
 # Create dictionary of all customers from customer.txt
