@@ -169,6 +169,18 @@ def process_login():
     return redirect("/login")
 
 
+@app.route("/logout")
+def process_logout():
+    """Log user out of site.
+
+    Remove "email" from session dictionary.
+    """
+    session.pop("email")
+
+    flash("You are now logged out.")
+    return redirect("/melons")
+
+
 @app.route("/checkout")
 def checkout():
     """Checkout customer, process payment, and ship melons."""
