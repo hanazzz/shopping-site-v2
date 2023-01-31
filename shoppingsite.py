@@ -141,32 +141,25 @@ def process_login():
     email = request.form['email']
     password = request.form['password']
 
-    print(email)
-    print(password)
-
     # Retrieve customer with matching email (if any, otherwise will be None)
     customer = customers.get_by_email(email)
 
-    # Check if customer with email exists
-    if customer:
-        # Check if provided password matches corresponding password
-        if customer.check_password(password):
-            # If passwords match, store user's email in session
-            session["email"] = email
-            # Flash success msg
-            flash(f"Welcome back, {customer.first_name} {customer.last_name}! You are now logged in.")
-            return redirect("/melons")
-
-        # If passwords don't match
-        else:
-            # Flash error msg
-            flash("Incorrect password. Please try again.")
-    
-    # If no matching email found, flash error msg
-    else:
+    #  If no customer with matching email found, flash error msg
+    if not customer:
         flash("No customer with that email found. Please try again.")
+        return redirect("/login")
 
-    return redirect("/login")
+    # If provided pw doesn't match stored pw, flash error msg
+    if not customer.check_password(password):
+        flash("Incorrect password. Please try again.")
+        return redirect("/login")
+
+    # If no issues, log user in
+    # Store user's email in session
+    session["email"] = email
+    # Flash success msg
+    flash(f"Welcome back, {customer.first_name} {customer.last_name}! You are now logged in.")
+    return redirect("/melons")
 
 
 @app.route("/logout")
