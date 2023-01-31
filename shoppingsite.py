@@ -6,10 +6,11 @@ put melons in a shopping cart.
 Authors: Joel Burton, Christian Fernandez, Meggie Mahnken, Katie Byers.
 """
 
-from flask import Flask, render_template, redirect, flash, session
+from flask import Flask, render_template, redirect, flash, session, request
 import jinja2
 
 import melons
+import customers
 
 app = Flask(__name__)
 
@@ -137,21 +138,35 @@ def process_login():
     dictionary, look up the user, and store them in the session.
     """
 
-    # TODO: Need to implement this!
+    email = request.form['email']
+    password = request.form['password']
 
-    # The logic here should be something like:
-    #
-    # - get user-provided name and password from request.form
-    # - use customers.get_by_email() to retrieve corresponding Customer
-    #   object (if any)
-    # - if a Customer with that email was found, check the provided password
-    #   against the stored one
-    # - if they match, store the user's email in the session, flash a success
-    #   message and redirect the user to the "/melons" route
-    # - if they don't, flash a failure message and redirect back to "/login"
-    # - do the same if a Customer with that email doesn't exist
+    print(email)
+    print(password)
 
-    return "Oops! This needs to be implemented"
+    # Retrieve customer with matching email (if any, otherwise will be None)
+    customer = customers.get_by_email(email)
+
+    # Check if customer with email exists
+    if customer:
+        # Check if provided password matches corresponding password
+        if password == customer.password:
+            # If passwords match, store user's email in session
+            session["email"] = email
+            # Flash success msg
+            flash(f"Welcome back, {customer.first_name} {customer.last_name}! You are now logged in.")
+            return redirect("/melons")
+
+        # If passwords don't match
+        else:
+            # Flash error msg
+            flash("Incorrect password. Please try again.")
+    
+    # If no matching email found, flash error msg
+    else:
+        flash("No customer with that email found. Please try again.")
+
+    return redirect("/login")
 
 
 @app.route("/checkout")
