@@ -150,7 +150,7 @@ def process_login():
     # Check if customer with email exists
     if customer:
         # Check if provided password matches corresponding password
-        if password == customer.password:
+        if customer.check_password(password):
             # If passwords match, store user's email in session
             session["email"] = email
             # Flash success msg

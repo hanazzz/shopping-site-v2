@@ -15,11 +15,28 @@ class Customer:
         self.last_name = last_name
         self.email = email
         self.password = password
+        self.hashed_password = hash(password)
 
     def __repr__(self):
         return (
             f"<Customer: {self.first_name} {self.last_name} || {self.email} >"
         )
+
+    def check_password(self, password):
+        """Check if password is correct password for this customer.
+
+        Compare the hash of password to the stored hash of the original password.
+
+        Arguments:
+        password (strO): User-provided password
+
+        Returns:
+        is_correct (bool): True if passwords match, False if not
+        """
+
+        is_correct = hash(password) == self.hashed_password
+
+        return is_correct
 
 
 def read_customers_from_file(filepath):
