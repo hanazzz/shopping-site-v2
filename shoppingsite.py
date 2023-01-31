@@ -86,25 +86,40 @@ def add_to_cart(melon_id):
 def show_shopping_cart():
     """Display content of shopping cart."""
 
-    # TODO: Display the contents of the shopping cart.
+    # Get the cart dictionary from the session
+    cart = session.get("cart")
 
-    # The logic here will be something like:
-    #
-    # - get the cart dictionary from the session
-    # - create a list to hold melon objects and a variable to hold the total
-    #   cost of the order
-    # - loop over the cart dictionary, and for each melon id:
-    #    - get the corresponding Melon object
-    #    - compute the total cost for that type of melon
-    #    - add this to the order total
-    #    - add quantity and total cost as attributes on the Melon object
-    #    - add the Melon object to the list created above
-    # - pass the total order cost and the list of Melon objects to the template
-    #
-    # Make sure your function can also handle the case wherein no cart has
-    # been added to the session
+    order_contents = []
+    order_total = 0
 
-    return render_template("cart.html")
+    # If cart is empty, flash msg
+    if not cart:
+        flash("Your cart is currently empty. Why don't you peruse our melon selection?")
+    else:
+        # Loop through each melon in cart
+        for melon_id in cart:
+            # Get melon obj
+            melon = melons.get_by_id(melon_id)
+            # Store qty as attribute
+            melon.qty = cart[melon_id]
+            # Calculate total cost and store as attribute
+            melon.total_cost = melon.price * melon.qty
+
+            # Add melon obj to order_contents list
+            order_contents.append(melon)
+            # Increase order total
+            order_total += melon.total_cost
+
+            print("Printing cart info")
+            print("Current melon", melon)
+            print(melon.qty)
+            print(melon.total_cost)
+            print("Current order contents", order_contents)
+            print("Current order total", order_total)
+
+    return render_template("cart.html",
+        order_contents=order_contents,
+        order_total=order_total)
 
 
 @app.route("/login", methods=["GET"])
